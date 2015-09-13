@@ -1,0 +1,55 @@
+max=999;
+min=0;
+i=max;
+
+# Initialize a vector of 1:999
+A=as.vector(max);
+for(i in 1:max){
+  A[i]=i;
+}
+
+# Multiply the vector by itself to create a 999x999 matrix of products
+ALL=mat.or.vec(999,999);
+ALL=A%*%t(A);
+
+# Traverse the upper triangle
+# Stop when the lowest multiplier of the products has been parsed
+num=0;
+div=0;
+lower=0;
+upper=0;
+potential=0;
+palindrome=0;
+
+# Start from lower right corner and check each column of number for a palindrome
+# If a palindrome that is bigger than any previous is found, then make this the candidate
+# Stop if the numbers less than the products of the current biggest palindrome are reached
+for(j in 1:max){
+  for(k in 1:j){
+    num=nchar(ALL[max-k+1,max-j+1]);
+    div=10^(floor(num/2));
+    lower=ALL[max-k+1,max-j+1]%%div;
+    lower=sapply(lapply(strsplit(as.character(lower), NULL), rev), paste, collapse="");
+        
+    #Divide for EVEN number strings
+    if(num %% 2==0){
+      upper=floor(ALL[max-k+1,max-j+1]/div);
+    }
+    #Divide for ODD number strings
+    else{
+      upper=floor(ALL[max-k+1,max-j+1]/(div*10));
+    }
+    #Check whether palindrome
+    if(upper==lower){
+      if(ALL[max-k+1,max-j+1]>palindrome | palindrome==0){
+        palindrome=ALL[max-k+1,max-j+1];
+        min=k;
+      }
+    }
+    if(min>(max-k+1)){
+      break;
+    }
+  }
+}
+  
+print(palindrome);
